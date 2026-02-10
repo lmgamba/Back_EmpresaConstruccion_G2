@@ -8,7 +8,7 @@ class User(BaseModel):
     name: str
     surname: str
     mail: str
-    password_hash: str
+    password: str
     role: str
     created_at: Optional[datetime] = None
 
@@ -16,10 +16,10 @@ class UserCreate(BaseModel):
     name: str
     surname: str
     mail: str
-    password_hash: str
+    password: str
     role: str
     created_at: Optional[datetime] = None
 
 class UserLogin(BaseModel):
     mail: str
-    password_hash: str
+    password: str

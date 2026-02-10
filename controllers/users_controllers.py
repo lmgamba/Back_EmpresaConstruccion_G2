@@ -8,7 +8,7 @@ async def get_user_id(user_id: int):
         conn = await get_conexion()
         async with conn.cursor(aio.DictCursor) as cursor:
             await cursor.execute(
-                "SELECT * FROM InnoDB.users WHERE id=%s", (user_id,)
+                "SELECT * FROM InnoDB.users WHERE id_users=%s", (user_id,)
             )
             user = await cursor.fetchone()
             if user is None:
