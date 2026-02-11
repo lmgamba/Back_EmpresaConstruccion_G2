@@ -49,7 +49,7 @@ async def create_user(user: UserCreate):
             #hasear el password
             hashed_password = hash_password(user.password)
             await cursor.execute(
-                " INSERT INTO InnoDB.users (name, surname, mail, password, role) VALUES (%s, %s, %s, %s, %s)",
+                " INSERT INTO InnoDB.users (name, surname, mail, password_hash, role) VALUES (%s, %s, %s, %s, %s)",
                 (user.name, user.surname, user.mail, hashed_password, 'user')
             )
             await conn.commit()
@@ -83,23 +83,37 @@ async def update_user(user_id: int, user: UserUpdate):
 
 #ADMIN ELIMINA USUARIOS
 async def delete_user(user_id: int):
+    exist = await get_user_id(user_id)
+    if exist:
+        try:
+            conn = await get_conexion()
+            async with conn.cursor(aio.DictCursor) as cursor:
+                await cursor.execute(
+                    "DELETE FROM InnoDB.users WHERE id_users=%s", (user_id,)
+                )
+                await conn.commit()
+                return {'msg': 'Usuario eliminado correctamente', 'item': exist}
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        finally:
+            conn.close()
+    else:
+        raise HTTPException(status_code=404, detail="Usuario no existe")
+    
+# ENCONTRAR USUARIO POR CORREO
+async def serach_mail(mail: str):
     try:
         conn = await get_conexion()
         async with conn.cursor(aio.DictCursor) as cursor:
             await cursor.execute(
-                "SELECT id_users FROM InnoDB.users WHERE id_users=%s AND role='user'", (user_id,)
+                "SELECT * FROM InnoDB.users WHERE mail LIKE %s", (f"%{mail}%")
             )
-            existing_user = await cursor.fetchone()
-            if not existing_user:
-                raise HTTPException(status_code=404, detail="Usuario no existe")
-            
-            await cursor.execute(
-                "DELETE FROM InnoDB.users WHERE id_users=%s", (user_id,)
-            )
-            await conn.commit()
-            return {'msg': 'Usuario eliminado correctamente'}
-        
+            user = await cursor.fetchone()
+            if user is None:
+                raise HTTPException(status_code=404, detail="Usuario no encontrado")
+            return user
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
     finally:
         conn.close()
