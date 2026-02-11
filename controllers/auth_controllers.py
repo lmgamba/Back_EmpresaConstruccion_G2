@@ -33,17 +33,17 @@ async def login_user(user_login : UserLogin):
                 "SELECT * FROM InnoDB.users WHERE mail=%s", (user_login.mail,)
                 )
             user = await cursor.fetchone()
-            if not user:
-                raise HTTPException(status_code=404, detail="Usuario o password incorrecto")
-            if not verify_password(user_login.password, user['password_hash']):
-                raise HTTPException(status_code=404, detail="Usuario o password incorrecto")
+        if not user:
+            raise HTTPException(status_code=404, detail="Usuario o password incorrecto")
+        if not verify_password(user_login.password, user['password_hash']):
+            raise HTTPException(status_code=404, detail="Usuario o password incorrecto")
             # crear el token con los datos y funcion de security
-            token_data = {
-                "id": user['id'],
-                "role": user['role']
-            }
-            token = create_token(token_data)
-            return {'msg': 'Usuario logueado correctamente', 'token': token}
+        token_data = {
+            "id_users": user['id_users'],
+            "role": user['role']
+        }
+        token = create_token(token_data)
+        return {'msg': 'Usuario logueado correctamente', 'token': token}
         
     except Exception as e:
         raise HTTPException(status_code=500, detail= f" Error: {str(e)}")
