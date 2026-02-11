@@ -35,7 +35,7 @@ async def login_user(user_login : UserLogin):
             user = await cursor.fetchone()
             if not user:
                 raise HTTPException(status_code=404, detail="Usuario o password incorrecto")
-            if not verify_password(user_login.password_hash, user['password_hash']):
+            if not verify_password(user_login.password, user['password_hash']):
                 raise HTTPException(status_code=404, detail="Usuario o password incorrecto")
             # crear el token con los datos y funcion de security
             token_data = {

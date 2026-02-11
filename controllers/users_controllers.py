@@ -18,3 +18,16 @@ async def get_user_id(user_id: int):
         raise HTTPException(status_code=500 , detail=f"Error: {str(e)}")
     finally:
         conn.close()
+        
+        
+async def get_all_users():
+    try:
+        conn = await get_conexion()
+        async with conn.cursor(aio.DictCursor) as cursor:
+            await cursor.execute("SELECT * FROM InnoDB.users WHERE role = 'operario'")
+            lista = await cursor.fetchall()
+            return lista
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+    finally:
+        conn.close()
