@@ -3,7 +3,7 @@
 
 ### obtener un usuario por id 
 GET http://127.0.0.1:8000/users/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VycyI6NCwicm9sZSI6ImFkbWluIiwiZXhwaXJlIjoxNzcwOTIyMzQwfQ.M_XxT33XsvSwkwFK168xyiSOOTRaGqAq578vVbmZGe0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VycyI6NCwicm9sZSI6ImFkbWluIiwiZXhwaXJlIjoxNzcwOTI3OTMxfQ.dsFXmAjqD-jxiSYSFccKm7GIqsNgQVA7QUXlCHWVOXQ
 
 ### obtener todos usuarios
 GET {{host}}:{{port}}/user/

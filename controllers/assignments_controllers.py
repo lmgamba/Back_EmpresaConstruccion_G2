@@ -2,42 +2,57 @@ import aiomysql as aio
 from db.config import get_conexion
 from fastapi import HTTPException
 from models.assignments_models import AssignmentCreate
+from core.email_config import send_email
 
 
 # CREAR ASIGNACIÓN (ADMIN)
-async def create_assignment(assignment: AssignmentCreate):
+async def create_assignment(assignment):
     try:
         conn = await get_conexion()
         async with conn.cursor(aio.DictCursor) as cursor:
-            #verificar usuario existe y es operario
-            await cursor.execute(
-                "SELECT id_users FROM InnoDB.users WHERE id_users=%s AND role='user'",
-                (assignment.users_id,)
-            )
-            if not await cursor.fetchone():
-                raise HTTPException(status_code=404, detail="Usuario no existe")
-            # verificar obra existe
-            await cursor.execute(
-                "SELECT id_constructions FROM InnoDB.constructionsSites WHERE id_constructions=%s",
-                (assignment.constructionsSites_id,)
-            )
-            if not await cursor.fetchone():
-                raise HTTPException(status_code=404, detail="Obra no existe")
-            # verificar que no tenga asignación activa en esa obra
-            await cursor.execute(
-                "SELECT id_assignments FROM InnoDB.assignments WHERE users_id=%s AND constructionsSites_id=%s AND status='active'", (assignment.users_id, assignment.constructionsSites_id)
-            )
-            if await cursor.fetchone():
-                raise HTTPException(status_code=400, detail="Ya tiene asignación activa en esta obra")
-            # crear asignación
-            await cursor.execute(
-                "INSERT INTO InnoDB.assignments (date_start, date_finish, status, users_id, constructionsSites_id)VALUES (%s, %s, 'active', %s, %s)", (assignment.date_start, assignment.date_finish, 
-                assignment.users_id, assignment.constructionsSites_id)
-            )
+            # Insertar asignación
+            await cursor.execute("""
+                INSERT INTO InnoDB.assignments 
+                (users_id, constructionsSites_id, date_start, date_finish, status)
+                VALUES (%s, %s, %s, %s, 'activo')
+            """, (
+                assignment.user_id,
+                assignment.construction_id,
+                assignment.date_start,
+                assignment.date_finish
+            ))
             await conn.commit()
-            return {"msg": "Asignación creada correctamente"}
+            new_id = cursor.lastrowid
+            # Obtener datos usuario
+            await cursor.execute(
+                "SELECT name, mail FROM InnoDB.users WHERE id_users=%s",
+                (assignment.user_id,)
+            )
+            user = await cursor.fetchone()
+            # Obtener datos obra
+            await cursor.execute(
+                "SELECT name, address FROM InnoDB.constructionsSites WHERE id_constructions=%s",
+                (assignment.construction_id,)
+            )
+            construction = await cursor.fetchone()
+            # Enviar email
+            subject = f"Nueva asignación: {construction['name']}"
+            body = f"""
+Hola {user['name']},
+
+Has sido asignado a la obra:
+
+Nombre: {construction['name']}
+Dirección: {construction['address']}
+Fecha inicio: {assignment.date_start}
+Fecha fin: {assignment.date_finish or 'No definida'}
+
+Saludos.
+"""
+            await send_email(user["mail"], subject, body)
+            return {"msg": "Asignación creada y email enviado", "assignment_id": new_id}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
 
