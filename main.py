@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 from routes import assignments_routes, auth_routes, user_routes, constructions_routes
+from fastapi.middleware.cors import CORSMiddleware
 
 #levantar el servidor
 
 app = FastAPI()
+
+#cors middleware
+app.add_middleware( CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"], ) # type: ignore
 
 app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
 app.include_router(user_routes.router, prefix="/users", tags=["Users"])

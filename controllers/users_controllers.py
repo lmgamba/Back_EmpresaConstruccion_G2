@@ -44,22 +44,14 @@ async def create_user(user: UserCreate):
             async with conn.cursor(aio.DictCursor) as cursor:
             # verificar si el correo existe
             #hasear el password
-<<<<<<< HEAD
-            hashed_password = hash_password(user.password)
-            await cursor.execute(
-                " INSERT INTO InnoDB.users (name, surname, mail, password_hash, role) VALUES (%s, %s, %s, %s, %s)",
-                (user.name, user.surname, user.mail, hashed_password, 'user')
-            )
-=======
                 hashed_password = hash_password(user.password)
                 await cursor.execute(
-                    " INSERT INTO InnoDB.users (name, surname, mail, password, role) VALUES (%s, %s, %s, %s, %s)",
+                    " INSERT INTO InnoDB.users (name, surname, mail, password_hash, role) VALUES (%s, %s, %s, %s, %s)",
                     (user.name, user.surname, user.mail, hashed_password, 'user')
                 )
->>>>>>> ccfa0cbd0ee83edd69bf72a9771420453625673c
-            await conn.commit()
-            new_id = cursor.lastrowid
-            return await get_user_id(new_id)
+                await conn.commit()
+                new_id = cursor.lastrowid
+                return await get_user_id(new_id)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
         finally:
@@ -101,36 +93,19 @@ async def delete_user(user_id: int):
     if exist:
         try:
             conn = await get_conexion()
-<<<<<<< HEAD
-            async with conn.cursor(aio.DictCursor) as cursor:
-                await cursor.execute(
-                    "DELETE FROM InnoDB.users WHERE id_users=%s", (user_id,)
-                )
-                await conn.commit()
-                return {'msg': 'Usuario eliminado correctamente', 'item': exist}
-            
-=======
             async with conn.cursor(aio.DictCursor) as cursor:        
                 await cursor.execute("DELETE FROM InnoDB.users WHERE id_users=%s", (user_id,))
                 await conn.commit()
             return {'msg': 'Usuario eliminado correctamente', "item": exist}
->>>>>>> ccfa0cbd0ee83edd69bf72a9771420453625673c
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
         finally:
             conn.close()
     else:
-<<<<<<< HEAD
-        raise HTTPException(status_code=404, detail="Usuario no existe")
-    
-# ENCONTRAR USUARIO POR CORREO
-async def serach_mail(mail: str):
-=======
         raise HTTPException(status_code=404, detail="Usuario no existe") 
         
 # ENCONTRAR USUARIO POR CORREO
 async def search_mail(mail: str):
->>>>>>> ccfa0cbd0ee83edd69bf72a9771420453625673c
     try:
         conn = await get_conexion()
         async with conn.cursor(aio.DictCursor) as cursor:
@@ -142,10 +117,6 @@ async def search_mail(mail: str):
                 raise HTTPException(status_code=404, detail="Usuario no encontrado")
             return user
     except Exception as e:
-<<<<<<< HEAD
-            raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
-=======
         raise HTTPException(status_code=500 , detail=f"Error: {str(e)}")
->>>>>>> ccfa0cbd0ee83edd69bf72a9771420453625673c
     finally:
         conn.close()
