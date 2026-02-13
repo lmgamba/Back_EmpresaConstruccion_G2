@@ -50,28 +50,34 @@ async def create_construction(construction: ConstructionCreate):
         conn.close()
 
 # Actualizar una obra (admin)
+# Actualizar una obra (admin)
 async def update_construction(construction_id: int, construction: ConstructionUpdate):
     try:
         conn = await get_conexion()
         async with conn.cursor(aio.DictCursor) as cursor:
+            # Construir query dinámica para actualización parcial
+            update_data = construction.model_dump(exclude_unset=True)
+            
+            if not update_data:
+                return {"msg": "No se proporcionaron datos para actualizar"}
+                
+            set_clause = ", ".join([f"{key}=%s" for key in update_data.keys()])
+            values = list(update_data.values())
+            values.append(construction_id)
+            
             await cursor.execute(
-                """
-                UPDATE InnoDB.constructionsSites
-                SET name=%s, description=%s, address=%s,
-                latitude=%s, longitude=%s, status=%s
-                WHERE id_constructions=%s
-                """,
-                (
-                    construction.name,
-                    construction.description,
-                    construction.address,
-                    construction.latitude,
-                    construction.longitude,
-                    construction.status,
-                    construction_id
-                )
+                f"UPDATE InnoDB.constructionsSites SET {set_clause} WHERE id_constructions=%s",
+                tuple(values)
             )
+            
             await conn.commit()
+            
+            if cursor.rowcount == 0:
+                 # Verificar si no se actualizó porque no existe o porque los datos eran iguales
+                await cursor.execute("SELECT id_constructions FROM InnoDB.constructionsSites WHERE id_constructions=%s", (construction_id,))
+                if not await cursor.fetchone():
+                    raise HTTPException(status_code=404, detail="Obra no encontrada")
+            
             return {"msg": "Obra actualizada correctamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")

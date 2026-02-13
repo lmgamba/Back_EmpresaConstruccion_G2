@@ -24,13 +24,13 @@ def verify_password(plaintext_password: str, hashed_password: str):
 
 # funcion para crear el token
 def create_token(data: dict):
-    datacopy_to_enconde = data.copy()
+    datacopy_to_encode = data.copy()
     # expiracion del token
     expire =datetime.now(tz=timezone.utc) + timedelta(minutes=ACCESS_TOKEN)
     #actualizamos el dict con la fecha expiracion
-    datacopy_to_enconde.update({'expire': int(expire.timestamp())})
+    datacopy_to_encode.update({'expire': int(expire.timestamp())})
     # codificar token
-    return jwt.encode(datacopy_to_enconde, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(datacopy_to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 # funcion decodificar el token
 def decode_token(token: str):

@@ -12,7 +12,7 @@ async def create_log(user_id: int, log):
         async with conn.cursor(aio.DictCursor) as cursor:
             await cursor.execute("""
                 INSERT INTO InnoDB.logs 
-                (description, type, user_id, constructionsSites_id)
+                (description, type, users_id, constructionsSites_id)
                 VALUES (%s, %s, %s, %s)
             """, (
                 log.description,

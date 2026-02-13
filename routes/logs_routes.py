@@ -8,7 +8,7 @@ router = APIRouter()
 # CREAR LOG (crearla el operario asignado a la obra)
 @router.post("/", status_code=201)
 async def create_log(log : LogCreate, current_user=Depends(get_current_user)):
-    return await logs_controllers.create_log(log, current_user["id_users"])
+    return await logs_controllers.create_log(current_user["id_users"], log)
 
 # LISTAR LOGS POR OBRA (admin)
 @router.get("/construction/{construction_id}", status_code=200)

@@ -20,11 +20,62 @@ Content-Type: application/json
     "role": "admin"
 }
 
-### Logear un usuario
-POST {{host}}:{{port}}/auth/login
+POST http://127.0.0.1:8000/auth/login
 Content-Type: application/json
 
 {
     "mail": "eliagaliana@gmail.com",
     "password": "123456"
+}
+
+### Guardar el token de respuesta para usarlo abajo (Authorization: Bearer <TOKEN>)
+
+### CREAR OBRA (Requiere Admin)
+POST http://127.0.0.1:8000/constructions/
+Content-Type: application/json
+Authorization: Bearer <TOKEN_AQUI>
+
+{
+    "name": "Obra Prueba Backend",
+    "description": "Edificio residencial centro",
+    "address": "Calle Mayor 1",
+    "latitude": 40.416,
+    "longitude": -3.703
+}
+
+### ACTUALIZAR OBRA (PARCIAL - SOLO NOMBRE)
+# Antes esto borraba la dirección. Ahora debe mantenerla.
+PUT http://127.0.0.1:8000/constructions/1
+Content-Type: application/json
+Authorization: Bearer <TOKEN_AQUI>
+
+{
+    "name": "Obra Prueba Backend (Renombrada)"
+}
+
+### OBTENER TODAS LAS OBRAS
+GET http://127.0.0.1:8000/constructions/
+Authorization: Bearer <TOKEN_AQUI>
+
+### CREAR ASIGNACION (Para probar Log luego)
+POST http://127.0.0.1:8000/assignments/
+Content-Type: application/json
+Authorization: Bearer <TOKEN_AQUI>
+
+{
+    "users_id": 1,  
+    "constructionsSites_id": 1, 
+    "date_start": "2023-10-27"
+}
+
+### CREAR LOG (COMO OPERARIO)
+# Asegúrate de usar el token del usuario asignado (ID 1 en el ejemplo)
+POST http://127.0.0.1:8000/logs/
+Content-Type: application/json
+Authorization: Bearer <TOKEN_AQUI>
+
+{
+    "description": "Avance de cimientos completado.",
+    "type": "Avance",
+    "construction_id": 1
 }
