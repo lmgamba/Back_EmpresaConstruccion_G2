@@ -25,6 +25,11 @@ async def create_user(user: UserCreate):
 async def update_user(user_id: str, user: UserUpdate, user_admin= Depends(is_admin)):
     return await users_controllers.update_user(int(user_id), user)
 
+#TODO: ADMINISTRADOR DESACTIVA UNA CUENTA DE OPERARIO
+@router.patch("/{user_id}", status_code=200)
+async def deactivate_user(user_id: str, status: bool, user_admin= Depends(is_admin)):
+    return await users_controllers.deactivate_user(int(user_id), status)
+
 # ADMINISTRADOR BORRA UNA CUENTA DE OPERARIO
 @router.delete("/{user_id}", status_code=200)
 async def delete_user(user_id: str, user= Depends(is_admin)):

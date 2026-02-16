@@ -98,18 +98,47 @@ Sistema de Gestión de Obras.
     finally:
         conn.close()
 
+
 # LISTAR LOGS POR OBRA
-async def get_logs_by_construction(constructionsSites_id: int):
+async def get_logs_by_construction(constructionsSites_id: int, current_user: dict):
     try:
         conn = await get_conexion()
         async with conn.cursor(aio.DictCursor) as cursor:
-            await cursor.execute(
-                "SELECT * FROM InnoDB.logs WHERE constructionsSites_id=%s ORDER BY date_register DESC", (constructionsSites_id,)
-            )
+            
+            # 1. VALIDACIÓN DE PERMISOS
+            # Si NO es admin, verificamos si está asignado y activo (status=1)
+            if current_user.get("role") != "admin":
+                await cursor.execute("""
+                    SELECT COUNT(*) as total 
+                    FROM InnoDB.assignments 
+                    WHERE users_id = %s 
+                    AND constructionsSites_id = %s 
+                    AND status = 1
+                """, (current_user["id_users"], constructionsSites_id))
+                
+                check = await cursor.fetchone()
+                
+                if check["total"] == 0:
+                    raise HTTPException(
+                        status_code=403, 
+                        detail="Acceso denegado: No estás asignado a esta obra o la asignación no está activa."
+                    )
+
+            # 2. EJECUCIÓN DE LA QUERY (Si es admin o está asignado)
+            await cursor.execute("""
+                SELECT * FROM InnoDB.logs 
+                WHERE constructionsSites_id = %s 
+                ORDER BY date_register DESC
+            """, (constructionsSites_id,))
+            
             logs = await cursor.fetchall()
             return logs
+
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        print(f"Error en logs_controllers: {e}")
+        raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
     finally:
         conn.close()
 
@@ -119,7 +148,7 @@ async def get_logs_by_user(user_id: int):
         conn = await get_conexion()
         async with conn.cursor(aio.DictCursor) as cursor:
             await cursor.execute(
-                "SELECT * FROM InnoDB.logs WHERE user_id=%s ORDER BY date_register DESC", (user_id,)
+                "SELECT * FROM InnoDB.logs WHERE users_id=%s ORDER BY date_register DESC", (user_id,)
             )
             logs = await cursor.fetchall()
             return logs

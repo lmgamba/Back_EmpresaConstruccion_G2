@@ -3,10 +3,25 @@
 
 ### obtener un usuario por id 
 GET http://127.0.0.1:8000/users/8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VycyI6OCwicm9sZSI6InVzZXIiLCJleHBpcmUiOjE3NzEwOTIyNzJ9.YUNIHn7UZbgK1SJ57Vi6XStOqXeNj0qRiRxabJr55I4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VycyI6MTYsInJvbGUiOiJhZG1pbiIsImV4cGlyZSI6MTc3MTI3MTc4OX0.t5v_qHafBYUPiIo0KR1BoxldfHL-jd5PnvB1cNUT4WM
 
 ### obtener todos usuarios
 GET {{host}}:{{port}}/user/
+
+
+### obtener todos usuarios
+PUT {{host}}:{{port}}/users/8
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VycyI6MTYsInJvbGUiOiJhZG1pbiIsImV4cGlyZSI6MTc3MTI3MjIzOX0.FM4yqNsnsjiqkPfndTfPqzdnbQNZYhf52P1Bxmf2rV8
+
+{
+    "name": "Paco",
+    "surname": "Sanchez",
+    "mail": "don_paco@gmail.com",
+    "password": "123456",
+    "role": "user"
+}
+
 
 ### crear un nuevo usuario
 POST {{host}}:{{port}}/auth/register

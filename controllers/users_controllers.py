@@ -103,7 +103,12 @@ async def delete_user(user_id: int):
             conn.close()
     else:
         raise HTTPException(status_code=404, detail="Usuario no existe") 
-        
+    
+    
+# TODO:  DESACTIVA USER
+
+async def deactivate_user(user_id: int, status: bool):
+        pass
 # ENCONTRAR USUARIO POR CORREO
 async def search_mail(mail: str):
     try:

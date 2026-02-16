@@ -1,3 +1,26 @@
-.env
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.python-version
+
+# --- Entornos Virtuales ---
+# Es vital ignorar esto; cada quien debe crear el suyo con pip install
 .venv/
 venv/
+env/
+ENV/
+
+# --- Variables de Entorno (SEGURIDAD) ---
+# Aquí van tus contraseñas de DB, llaves de API, etc. ¡NUNCA las subas!
+.env
+
+# --- VS Code ---
+.vscode/
+# Excepción: si quieren compartir las extensiones recomendadas
+!.vscode/extensions.json
+
+# --- Sistema Operativo ---
+.DS_Store
+Thumbs.db
