@@ -38,4 +38,5 @@ async def get_assignments_by_user(user_id: int, current_user=Depends(get_current
 # Finalizar asignación (solo admin)
 @router.put("/{assignment_id}/finish", status_code=200)
 async def finish_assignment(assignment_id: int, current_user=Depends(is_admin)):
+    print(assignment_id)
     return await assignments_controllers.finish_assignment(assignment_id)

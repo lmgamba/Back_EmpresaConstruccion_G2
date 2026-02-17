@@ -39,8 +39,8 @@ POST http://127.0.0.1:8000/auth/login
 Content-Type: application/json
 
 {
-    "mail": "eliagaliana@gmail.com",
-    "password": "123456"
+    "mail": "jefe.empresa.construccion@gmail.com",
+    "password": "jefe12345"
 }
 
 ### Guardar el token de respuesta para usarlo abajo (Authorization: Bearer <TOKEN>)
@@ -95,3 +95,10 @@ Authorization: Bearer TOKEN
     "type": "Operario Alerta SEGURIDAD",
     "constructionsSites_id": 3
 }
+
+
+### Finalizar asignación
+PUT http://127.0.0.1:8000/assignments/1/finish
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VycyI6MTMsInJvbGUiOiJhZG1pbiIsImV4cGlyZSI6MTc3MTM1OTI5NH0.1zpQFUkaZAbSTdUyl1mlWvHsNO8xljOLt9v1iN7OYYE
+Content-Type: application/json
+

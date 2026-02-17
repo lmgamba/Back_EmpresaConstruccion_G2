@@ -199,7 +199,7 @@ async def finish_assignment(assignment_id: int):
             if not await cursor.fetchone():
                 raise HTTPException(status_code=404, detail="Asignación no existe")
             await cursor.execute(
-                "UPDATE InnoDB.assignments SET status='finished' WHERE id_assignments=%s",
+                "UPDATE InnoDB.assignments SET status=0 WHERE id_assignments=%s",
                 (assignment_id,),
             )
             await conn.commit()
