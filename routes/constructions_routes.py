@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, Query
 from controllers import constructions_controllers
 from models.constructions_models import ConstructionCreate, ConstructionUpdate
-from core.dependencies import is_admin
+from core.dependencies import get_current_user, is_admin
 
 router = APIRouter()
 
 @router.get("/")
-async def get_all(status: str = Query(None), current_user=Depends(is_admin)):
+async def get_all(status: str = Query(None), current_user=Depends(get_current_user)):
     return await constructions_controllers.get_all_constructions(status)
 
 @router.post("/", status_code=201)
@@ -24,3 +24,5 @@ async def delete(construction_id: int, current_user=Depends(is_admin)):
 @router.get("/{construction_id}/workers", status_code=200)
 async def get_workers(construction_id: int, current_user=Depends(is_admin)):
     return await constructions_controllers.get_workers_by_construction(construction_id)
+
+
