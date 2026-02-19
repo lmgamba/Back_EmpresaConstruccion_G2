@@ -22,6 +22,20 @@ async def get_all_constructions(status: str = None):
     finally:
         conn.close()
 
+async def get_construction_by_id(construction_id: int):
+    try:
+        conn = await get_conexion()
+        async with conn.cursor(aio.DictCursor) as cursor:
+            await cursor.execute(
+                "SELECT * FROM InnoDB.constructionsSites WHERE id_constructions=%s",
+                (construction_id,)
+            )
+            construction = await cursor.fetchone()
+            if not construction:
+                raise HTTPException(status_code=404, detail="Obra no encontrada")
+            return construction
+    finally:
+        conn.close()
 
 # Crear una obra nueva (solo admin)
 async def create_construction(construction: ConstructionCreate):

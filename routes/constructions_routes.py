@@ -9,6 +9,10 @@ router = APIRouter()
 async def get_all(status: str = Query(None), current_user=Depends(get_current_user)):
     return await constructions_controllers.get_all_constructions(status)
 
+@router.get("/{construction_id}")
+async def get_construction_by_id(construction_id: int, current_user=Depends(get_current_user)):
+    return await constructions_controllers.get_construction_by_id(construction_id)
+
 @router.post("/", status_code=201)
 async def create(construction: ConstructionCreate, current_user=Depends(is_admin)):
     return await constructions_controllers.create_construction(construction)

@@ -8,11 +8,11 @@ router = APIRouter()
 
 # ADMINISTRADOR OBTIENE USUARIO POR ID
 @router.get('/{user_id}', status_code=200)
-async def get_user_id(id: int, current_user = Depends(get_current_user)):
+async def get_user_id(user_id: str, current_user = Depends(get_current_user)):
    
     # 1. SEGURIDAD: Comprobar si el que pide es Admin o es el propio usuario
     # Usamos int() en ambos lados para evitar el error de Texto vs Número
-    if current_user['role'] != 'admin' and int(current_user['id_users']) != int(id):
+    if current_user['role'] != 'admin' and int(current_user['id_users']) != int(user_id):
         raise HTTPException(status_code=403, detail="No tienes permiso para ver este perfil")
     return await users_controllers.get_user_id(int(user_id))
 
