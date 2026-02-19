@@ -24,7 +24,7 @@ async def create_log(user_id: int, log, background_tasks):
                 (log.constructionsSites_id,)
             )
             construction_status = await cursor.fetchone()
-            if not construction_status or construction_status['status'] != 'active':
+            if not construction_status or construction_status['status'] != 'IN_PROGRESS':
                 raise HTTPException(status_code=400, detail="La obra no está activa. No puedes crear logs para ella.")
             
             # Verificar que el usuario esté asignado a esta obra

@@ -117,7 +117,7 @@ async def delete_construction(construction_id: int):
                 SELECT id_assignments 
                 FROM InnoDB.assignments 
                 WHERE constructionsSites_id=%s 
-                AND status='active'
+                AND status='IN_PROGRESS'
                 """,
                 (construction_id,)
             )
@@ -151,7 +151,7 @@ async def get_workers_by_construction(construction_id: int):
                 JOIN InnoDB.assignments a
                 ON u.id_users = a.users_id
                 WHERE a.constructionsSites_id=%s
-                AND a.status='active'
+                AND a.status='IN_PROGRESS'
                 """, (construction_id,)
             )
             return await cursor.fetchall()
