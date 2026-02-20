@@ -58,7 +58,7 @@ async def create_log(user_id: int, log, background_tasks):
             )
             construction = await cursor.fetchone()
             
-            # QUERY CLAVE: Buscar el mail del Administrador asignado a esta obra
+            # BUSCAR ADMIN: Buscar el mail del Administrador asignado a esta obra
             # Se busca en tabla assigment el unico con rol 'admin' de esta obra específica
             await cursor.execute("""
                 SELECT u.mail, u.name 
@@ -71,7 +71,7 @@ async def create_log(user_id: int, log, background_tasks):
             
             admin = await cursor.fetchone()
 
-            # 5. Si encontramos un admin, enviamos la tarea de correo
+            #  Si encontramos un admin, enviamos la tarea de correo
             if admin:
                 subject = f"🔔 Nuevo Log: {construction['name']}"
                 body = f"""
@@ -124,7 +124,7 @@ async def get_logs_by_construction(constructionsSites_id: int, current_user: dic
                         detail="Acceso denegado: No estás asignado a esta obra o la asignación no está activa."
                     )
 
-            # 2. EJECUCIÓN DE LA QUERY (Si es admin o está asignado)
+            # EJECUCIÓN DE LA QUERY (Si es admin o está asignado)
             await cursor.execute("""
                 SELECT * FROM InnoDB.logs 
                 WHERE constructionsSites_id = %s 
